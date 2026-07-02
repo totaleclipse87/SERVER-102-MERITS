@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Nexus Required Merits Calculator</title>
+
+  <meta name="description" content="Server 102 Nexus Required Merits Calculator. Percent of HHP equals required merits." />
+  <meta property="og:title" content="Nexus Required Merits Calculator" />
+  <meta property="og:description" content="Calculate required merits from Highest Historical Power." />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#0b1020" />
+
+  <style>
+    :root {
+      --bg-dark: #030712;
+      --card: rgba(15, 23, 42, 0.96);
+      --blue: #2f80ff;
+      --blue-soft: #93c5fd;
+      --gold: #f5b942;
+      --gold-soft: #ffe5a3;
+      --text: #f8fafc;
+      --muted: #cbd5e1;
+      --border: rgba(245, 185, 66, 0.75);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text);
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 18px;
+      background:
+        radial-gradient(circle at top left, rgba(47, 128, 255, 0.35), transparent 32%),
+        radial-gradient(circle at bottom right, rgba(245, 185, 66, 0.22), transparent 36%),
+        linear-gradient(135deg, #020617, #0f172a 55%, #030712);
+    }
+
+    .app {
+      width: 100%;
+      max-width: 460px;
+      border: 2px solid var(--border);
+      border-radius: 26px;
+      overflow: hidden;
+      background: var(--card);
+      box-shadow: 0 22px 55px rgba(0, 0, 0, 0.7), 0 0 30px rgba(47, 128, 255, 0.23);
+    }
+
+    .hero {
+      position: relative;
+      text-align: center;
+      padding: 30px 22px 22px;
+      background:
+        linear-gradient(90deg, rgba(47, 128, 255, 0.25), rgba(245, 185, 66, 0.18)),
+        rgba(255, 255, 255, 0.025);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.13);
+    }
+
+    .helmet {
+      width: 92px;
+      height: 92px;
+      margin: 0 auto 10px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle, rgba(245, 185, 66, 0.26), transparent 62%),
+        rgba(2, 6, 23, 0.65);
+      border: 1px solid rgba(245, 185, 66, 0.55);
+      font-size: 52px;
+      box-shadow: 0 0 24px rgba(47, 128, 255, 0.35);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 30px;
+      color: var(--gold);
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      line-height: 1.05;
+    }
+
+    .subtitle {
+      margin-top: 8px;
+      color: var(--blue-soft);
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+
+    .content {
+      padding: 24px;
+    }
+
+    .rule {
+      margin: 0 0 18px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.35;
+    }
+
+    .rule strong {
+      color: var(--gold);
+    }
+
+    label {
+      display: block;
+      margin: 16px 0 7px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+    }
+
+    input {
+      width: 100%;
+      padding: 16px;
+      border-radius: 15px;
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      background: #020617;
+      color: var(--text);
+      font-size: 22px;
+      outline: none;
+    }
+
+    input::placeholder {
+      color: #64748b;
+    }
+
+    input:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(47, 128, 255, 0.25);
+    }
+
+    .quick-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .small-btn {
+      flex: 1;
+      padding: 11px 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(245, 185, 66, 0.42);
+      background: rgba(245, 185, 66, 0.1);
+      color: var(--gold-soft);
+      font-weight: 800;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .primary {
+      width: 100%;
+      margin-top: 18px;
+      padding: 16px;
+      border: 0;
+      border-radius: 15px;
+      background: linear-gradient(90deg, #1d70e8, #6aa4ff);
+      color: white;
+      font-size: 18px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .result-card {
+      margin-top: 20px;
+      padding: 22px 14px;
+      text-align: center;
+      border-radius: 20px;
+      border: 1px solid rgba(245, 185, 66, 0.85);
+      background:
+        linear-gradient(135deg, rgba(47, 128, 255, 0.22), rgba(245, 185, 66, 0.16)),
+        #020617;
+    }
+
+    .result-title {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    #requiredMerits {
+      display: block;
+      margin-top: 8px;
+      color: var(--gold);
+      font-size: 48px;
+      font-weight: 1000;
+      line-height: 1.05;
+      word-break: break-word;
+      text-shadow: 0 0 16px rgba(245, 185, 66, 0.28);
+    }
+
+    .merits-word {
+      margin-top: 4px;
+      color: white;
+      font-size: 18px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    #mathLine {
+      min-height: 22px;
+      margin-top: 13px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .copy {
+      width: 100%;
+      margin-top: 14px;
+      padding: 14px;
+      border: 0;
+      border-radius: 15px;
+      background: linear-gradient(90deg, #8a6d1d, #f5b942);
+      color: #111827;
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .footer {
+      padding: 16px 18px 20px;
+      text-align: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      color: #94a3b8;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .blue {
+      color: #60a5fa;
+      font-weight: 900;
+    }
+
+    .gold {
+      color: var(--gold);
+      font-weight: 900;
+    }
+
+    @media (max-width: 420px) {
+      .content {
+        padding: 21px;
+      }
+
+      h1 {
+        font-size: 25px;
+      }
+
+      #requiredMerits {
+        font-size: 39px;
+      }
+
+      .helmet {
+        width: 82px;
+        height: 82px;
+        font-size: 46px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <section class="hero">
+      <div class="helmet">☠️⚔️</div>
+      <h1>Server 102</h1>
+      <div class="subtitle">Nexus Required Merits Check</div>
+    </section>
+
+    <section class="content">
+      <p class="rule"><strong>% of Highest Historical Power</strong> = Required Merits</p>
+
+      <label for="hhpInput">Highest Historical Power (HHP)</label>
+      <input id="hhpInput" type="text" inputmode="decimal" autocomplete="off" placeholder="Example: 120,000,000" />
+
+      <label for="percentInput">Percent of HHP</label>
+      <input id="percentInput" type="text" inputmode="decimal" autocomplete="off" placeholder="Example: 5" />
+
+      <div class="quick-row">
+        <button class="small-btn" type="button" onclick="setPercent(5)">Set 5%</button>
+        <button class="small-btn" type="button" onclick="setPercent(10)">Set 10%</button>
+        <button class="small-btn" type="button" onclick="resetCalc()">Reset</button>
+      </div>
+
+      <button class="primary" type="button" onclick="calculateRequiredMerits()">Calculate Required Merits</button>
+
+      <div class="result-card">
+        <div class="result-title">Required Merits</div>
+        <span id="requiredMerits">0</span>
+        <div class="merits-word">Merits</div>
+        <div id="mathLine">Enter HHP and percent, then calculate.</div>
+      </div>
+
+      <button class="copy" type="button" onclick="copyResult()">Copy Result</button>
+    </section>
+
+    <section class="footer">
+      <span class="blue">NEXUS</span> | Balanced PvP + Real Life | <span class="gold">No Deadweight</span>
+    </section>
+  </main>
+
+  <script>
+    function cleanNumber(value) {
+      value = String(value || "");
+      value = value.replace(/,/g, "");
+      value = value.replace(/%/g, "");
+      value = value.replace(/\s/g, "");
+      var number = parseFloat(value);
+      return isNaN(number) ? 0 : number;
+    }
+
+    function formatNumber(value) {
+      var rounded = Math.round(value);
+      return rounded.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    function calculateRequiredMerits() {
+      var hhp = cleanNumber(document.getElementById("hhpInput").value);
+      var percent = cleanNumber(document.getElementById("percentInput").value);
+      var requiredMerits = hhp * percent / 100;
+
+      document.getElementById("requiredMerits").textContent = formatNumber(requiredMerits);
+
+      if (hhp > 0 && percent > 0) {
+        document.getElementById("mathLine").textContent =
+          formatNumber(hhp) + " HHP × " + percent + "% = " + formatNumber(requiredMerits) + " required merits";
+      } else {
+        document.getElementById("mathLine").textContent = "Enter HHP and percent, then calculate.";
+      }
+    }
+
+    function setPercent(percent) {
+      document.getElementById("percentInput").value = percent;
+      calculateRequiredMerits();
+    }
+
+    function resetCalc() {
+      document.getElementById("hhpInput").value = "";
+      document.getElementById("percentInput").value = "";
+      document.getElementById("requiredMerits").textContent = "0";
+      document.getElementById("mathLine").textContent = "Enter HHP and percent, then calculate.";
+    }
+
+    function copyResult() {
+      calculateRequiredMerits();
+      var result = document.getElementById("requiredMerits").textContent;
+      var text = "Required Merits: " + result;
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () {
+          document.getElementById("mathLine").textContent = "Copied: " + text;
+        }).catch(function () {
+          document.getElementById("mathLine").textContent = text;
+        });
+      } else {
+        document.getElementById("mathLine").textContent = text;
+      }
+    }
+
+    document.getElementById("hhpInput").addEventListener("input", calculateRequiredMerits);
+    document.getElementById("percentInput").addEventListener("input", calculateRequiredMerits);
+  </script>
+</body>
+</html>
